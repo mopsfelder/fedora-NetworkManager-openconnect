@@ -12,11 +12,6 @@ Release:   3%{svn_snapshot}%{?dist}
 License:   GPLv2+
 Group:     System Environment/Base
 URL:       http://www.gnome.org/projects/NetworkManager/
-# Created from the git mirror of GNOME SVN:
-# git-clone git://git.infradead.org/network-manager-openconnect.git
-# cd network-manager-openconnect
-# git-archive --format=tar --prefix=NetworkManager-openconnect-0.7.0/ b94964eb \
-#                 | gzip -9 > NetworkManager-openconnect-0.7.0.svn14.tar.gz
 Source:    %{name}-%{version}%{svn_snapshot}.tar.gz
 Patch0:	   NetworkManager-openconnect-update-translations.patch
 Patch1:	   NetworkManager-openconnect-allow-lasthost-autoconnect.patch
