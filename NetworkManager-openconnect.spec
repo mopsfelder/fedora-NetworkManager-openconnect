@@ -8,7 +8,7 @@
 Summary:   NetworkManager VPN integration for openconnect
 Name:      NetworkManager-openconnect
 Version:   0.7.0.99
-Release:   5%{svn_snapshot}%{?dist}
+Release:   6%{svn_snapshot}%{?dist}
 License:   GPLv2+
 Group:     System Environment/Base
 URL:       http://www.gnome.org/projects/NetworkManager/
@@ -108,6 +108,9 @@ fi
 %{_datadir}/gnome-vpn-properties/openconnect/nm-openconnect-dialog.glade
 
 %changelog
+* Fri Jul 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.7.0.99-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
+
 * Mon Jun  1 2009 David Woodhouse <David.Woodhouse@intel.com> 1:0.7.0.99-5
 - Accept 'pem_passphrase_fsid' key in gconf
 
