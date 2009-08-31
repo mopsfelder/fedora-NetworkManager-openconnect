@@ -19,8 +19,8 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: gtk2-devel             >= %{gtk2_version}
 BuildRequires: dbus-devel             >= %{dbus_version}
 BuildRequires: dbus-glib-devel        >= 0.74
-#BuildRequires: NetworkManager-devel   >= %{nm_version}
-#BuildRequires: NetworkManager-glib-devel >= %{nm_version}
+BuildRequires: NetworkManager-devel   >= %{nm_version}
+BuildRequires: NetworkManager-glib-devel >= %{nm_version}
 BuildRequires: GConf2-devel
 BuildRequires: gnome-keyring-devel
 BuildRequires: libglade2-devel
