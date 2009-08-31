@@ -1,36 +1,30 @@
-%define nm_version          1:0.7.0.99-1
+%define nm_version          1:0.7.996-1
 %define dbus_version        1.1
 %define gtk2_version        2.10.0
 %define openconnect_version 0.99
 
-%define svn_snapshot        %{nil}
+%define svn_snapshot        .git20090828
 
 Summary:   NetworkManager VPN integration for openconnect
 Name:      NetworkManager-openconnect
-Version:   0.7.0.99
-Release:   7%{svn_snapshot}%{?dist}
+Version:   0.7.996
+Release:   1%{svn_snapshot}%{?dist}
 License:   GPLv2+
 Group:     System Environment/Base
 URL:       http://www.gnome.org/projects/NetworkManager/
-Source:    %{name}-%{version}%{svn_snapshot}.tar.gz
-Patch0:	   NetworkManager-openconnect-update-translations.patch
-Patch1:	   NetworkManager-openconnect-allow-lasthost-autoconnect.patch
-Patch2:	   NetworkManager-openconnect-allow-form-opts.patch
-Patch3:	   NetworkManager-openconnect-mtu.patch
-Patch4:	   NetworkManager-openconnect-gwcert.patch
-Patch5:	   NetworkManager-openconnect-passphrase-fsid.patch
+Source:    %{name}-%{version}%{svn_snapshot}.tar.bz2
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 BuildRequires: gtk2-devel             >= %{gtk2_version}
 BuildRequires: dbus-devel             >= %{dbus_version}
-BuildRequires: NetworkManager-devel   >= %{nm_version}
-BuildRequires: NetworkManager-glib-devel >= %{nm_version}
+BuildRequires: dbus-glib-devel        >= 0.74
+#BuildRequires: NetworkManager-devel   >= %{nm_version}
+#BuildRequires: NetworkManager-glib-devel >= %{nm_version}
 BuildRequires: GConf2-devel
 BuildRequires: gnome-keyring-devel
 BuildRequires: libglade2-devel
 BuildRequires: intltool gettext
-BuildRequires: gnome-common
 BuildRequires: autoconf automake libtool
 
 Requires: NetworkManager   >= %{nm_version}
@@ -48,12 +42,6 @@ with NetworkManager and the GNOME desktop
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
 
 %build
 %configure --enable-more-warnings=yes
@@ -108,6 +96,10 @@ fi
 %{_datadir}/gnome-vpn-properties/openconnect/nm-openconnect-dialog.glade
 
 %changelog
+* Sun Aug 30 2009 Dan Williams <dcbw@redhat.com> - 0.7.996-1
+- Rebuild for updated NetworkManager
+- Drop upstreamed patches
+
 * Mon Jul 27 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.7.0.99-7
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
 
