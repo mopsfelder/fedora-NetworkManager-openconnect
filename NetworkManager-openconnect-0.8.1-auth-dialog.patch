@@ -509,17 +509,20 @@ index 0000000..602bfc9
 +
 +
 diff --git a/Makefile.am b/Makefile.am
-index aeef372..72f3e52 100644
+index aeef372..08953ef 100644
 --- a/Makefile.am
 +++ b/Makefile.am
-@@ -1,6 +1,6 @@
- AUTOMAKE_OPTIONS = foreign
- 
--SUBDIRS = src
-+SUBDIRS = src auth-dialog
- 
- if WITH_GNOME
+@@ -6,6 +6,10 @@ if WITH_GNOME
  SUBDIRS += properties po
+ endif
+ 
++if WITH_AUTHDLG
++SUBDIRS += auth-dialog
++endif
++
+ dbusservicedir = $(sysconfdir)/dbus-1/system.d
+ dbusservice_DATA = nm-openconnect-service.conf
+ 
 diff --git a/auth-dialog/Makefile.am b/auth-dialog/Makefile.am
 new file mode 100644
 index 0000000..07c8cdf

@@ -9,7 +9,7 @@
 Summary:   NetworkManager VPN integration for openconnect
 Name:      NetworkManager-openconnect
 Version:   0.8.1
-Release:   3%{snapshot}%{?dist}
+Release:   4%{snapshot}%{?dist}
 License:   GPLv2+
 Group:     System Environment/Base
 URL:       http://www.gnome.org/projects/NetworkManager/
@@ -28,7 +28,7 @@ BuildRequires: gnome-keyring-devel
 BuildRequires: libglade2-devel
 BuildRequires: intltool gettext
 BuildRequires: autoconf automake libtool
-BuildRequires: pkgconfig(openconnect)
+BuildRequires: pkgconfig(openconnect) pkgconfig(libxml-2.0)
 
 Requires: NetworkManager   >= %{nm_version}
 Requires: openconnect      >= %{openconnect_version}
@@ -102,6 +102,9 @@ fi
 %{_datadir}/gnome-vpn-properties/openconnect/nm-openconnect-dialog.glade
 
 %changelog
+* Wed Mar 09 2011 David Woodhouse <dwmw2@infradead.org> 1:0.8.1-4
+- BuildRequire libxml2-devel
+
 * Wed Mar 09 2011 David Woodhouse <dwmw2@infradead.org> 1:0.8.1-3
 - Rebuild with auth-dialog, no longer in openconnect package
 
