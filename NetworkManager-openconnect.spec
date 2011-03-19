@@ -29,6 +29,7 @@ BuildRequires: libglade2-devel
 BuildRequires: intltool gettext
 BuildRequires: autoconf automake libtool
 BuildRequires: pkgconfig(openconnect) pkgconfig(libxml-2.0)
+BuildRequires: openconnect-devel-static
 
 Requires: NetworkManager   >= %{nm_version}
 Requires: openconnect      >= %{openconnect_version}
@@ -102,6 +103,9 @@ fi
 %{_datadir}/gnome-vpn-properties/openconnect/nm-openconnect-dialog.glade
 
 %changelog
+* Wed Mar 09 2011 David Woodhouse <dwmw2@infradead.org> 1:0.8.1-5
+- BuildRequire openconnect-devel-static, although we don't. (rh #689043)
+
 * Wed Mar 09 2011 David Woodhouse <dwmw2@infradead.org> 1:0.8.1-4
 - BuildRequire libxml2-devel
 
