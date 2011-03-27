@@ -9,12 +9,14 @@
 Summary:   NetworkManager VPN integration for openconnect
 Name:      NetworkManager-openconnect
 Version:   0.8.1
-Release:   5%{snapshot}%{?dist}
+Release:   6%{snapshot}%{?dist}
 License:   GPLv2+
 Group:     System Environment/Base
 URL:       http://www.gnome.org/projects/NetworkManager/
 Source:    %{name}-%{realversion}%{snapshot}.tar.bz2
 Patch0:	   NetworkManager-openconnect-0.8.1-auth-dialog.patch
+Patch1:    0001-replace-nm_warning-with-g_warning.patch
+Patch2:    0002-replace-nm_info-with-g_message.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
@@ -47,6 +49,8 @@ with NetworkManager and the GNOME desktop
 %prep
 %setup -q -n NetworkManager-openconnect-%{realversion}
 %patch0 -p1
+%patch1 -p1
+%patch2 -p1
 
 %build
 autoreconf
@@ -103,6 +107,9 @@ fi
 %{_datadir}/gnome-vpn-properties/openconnect/nm-openconnect-dialog.glade
 
 %changelog
+* Sat Mar 26 2011 Christopher Aillon <caillon@redhat.com> - 0.8.1-6
+- Rebuild against NetworkManager 0.9
+
 * Wed Mar 09 2011 David Woodhouse <dwmw2@infradead.org> 1:0.8.1-5
 - BuildRequire openconnect-devel-static, although we don't. (rh #689043)
 
