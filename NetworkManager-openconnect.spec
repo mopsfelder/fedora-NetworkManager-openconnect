@@ -3,7 +3,7 @@
 %define gtk2_version        2.10.0
 %define openconnect_version 3.00
 
-%define snapshot .git20110326
+%define snapshot .git20110418
 %define realversion 0.8.1
 
 Summary:   NetworkManager VPN integration for openconnect
@@ -14,8 +14,6 @@ License:   GPLv2+
 Group:     System Environment/Base
 URL:       http://www.gnome.org/projects/NetworkManager/
 Source:    %{name}-%{realversion}%{snapshot}.tar.bz2
-Patch1:    0001-replace-nm_warning-with-g_warning.patch
-Patch2:    0002-replace-nm_info-with-g_message.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
@@ -47,8 +45,6 @@ with NetworkManager and the GNOME desktop
 
 %prep
 %setup -q -n NetworkManager-openconnect-%{realversion}
-%patch1 -p1
-%patch2 -p1
 
 %build
 autoreconf
@@ -105,6 +101,9 @@ fi
 %{_datadir}/gnome-vpn-properties/openconnect/nm-openconnect-dialog.ui
 
 %changelog
+* Mon Apr 18 2011 David Woodhouse <dwmw2@infradead.org> - 0.8.1-8
+- Update to *working* git snapshot
+
 * Sat Mar 26 2011 Christopher Aillon <caillon@redhat.com> - 0.8.1-7
 - Update to git snapshot
 
