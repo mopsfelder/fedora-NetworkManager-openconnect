@@ -3,13 +3,13 @@
 %define gtk2_version        2.10.0
 %define openconnect_version 3.00
 
-%define snapshot .git20110418
+%define snapshot .git20110419
 %define realversion 0.8.1
 
 Summary:   NetworkManager VPN integration for openconnect
 Name:      NetworkManager-openconnect
 Version:   0.8.1
-Release:   8%{snapshot}%{?dist}
+Release:   9%{snapshot}%{?dist}
 License:   GPLv2+, LGPLv2.1
 Group:     System Environment/Base
 URL:       http://www.gnome.org/projects/NetworkManager/
@@ -101,6 +101,9 @@ fi
 %{_datadir}/gnome-vpn-properties/openconnect/nm-openconnect-dialog.ui
 
 %changelog
+* Tue Apr 19 2011 David Woodhouse <dwmw2@infradead.org> - 0.8.1-9
+- Fix handling of manually accepted certs and double-free of form answers
+
 * Mon Apr 18 2011 David Woodhouse <dwmw2@infradead.org> - 0.8.1-8
 - Update to *working* git snapshot
 
