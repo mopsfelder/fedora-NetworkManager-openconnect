@@ -9,7 +9,7 @@
 Summary:   NetworkManager VPN integration for openconnect
 Name:      NetworkManager-openconnect
 Version:   0.8.999
-Release:   2%{snapshot}%{?dist}
+Release:   3%{snapshot}%{?dist}
 License:   GPLv2+, LGPLv2.1
 Group:     System Environment/Base
 URL:       http://www.gnome.org/projects/NetworkManager/
@@ -26,8 +26,8 @@ BuildRequires: GConf2-devel
 BuildRequires: gnome-keyring-devel
 BuildRequires: intltool gettext
 BuildRequires: autoconf automake libtool
-BuildRequires: pkgconfig(openconnect) pkgconfig(libxml-2.0)
-BuildRequires: openconnect-devel
+BuildRequires: pkgconfig(libxml-2.0)
+BuildRequires: pkgconfig(openconnect) >= 3.11
 
 Requires: NetworkManager   >= %{nm_version}
 Requires: openconnect      >= %{openconnect_version}
@@ -100,6 +100,9 @@ fi
 %{_datadir}/gnome-vpn-properties/openconnect/nm-openconnect-dialog.ui
 
 %changelog
+* Thu Aug 25 2011 David Woodhouse <David.Woodhouse@intel.com> - 0.8.999-3
+- Rebuild again to really use shared library this time (#733431)
+
 * Thu Jun 30 2011 David Woodhouse <David.Woodhouse@intel.com> - 0.8.999-2
 - Link against shared libopenconnect.so instead of static library
 
