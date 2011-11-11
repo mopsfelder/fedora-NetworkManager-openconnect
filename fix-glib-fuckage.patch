@@ -1,0 +1,168 @@
+commit 50af1fcf4fdb34b45799bbaa07be68b8adc8007b
+Author: David Woodhouse <David.Woodhouse@intel.com>
+Date:   Fri Nov 11 00:23:38 2011 +0000
+
+    Handle stupid premature GCond and GMutex API breakage
+    
+    Gr.
+
+commit c6d92c3e64898ea62789def04b86752dec904326
+Author: David Woodhouse <David.Woodhouse@intel.com>
+Date:   Thu Nov 10 23:53:58 2011 +0000
+
+    Drop g_thread_init()
+
+commit b2a5782abc44710345ad6f907b7d855d81061ee5
+Author: David Woodhouse <David.Woodhouse@intel.com>
+Date:   Thu Nov 10 23:52:55 2011 +0000
+
+    Switch to gtk_box_new()
+
+diff --git a/auth-dialog/main.c b/auth-dialog/main.c
+index ecf7d77..0b5b5d1 100644
+--- a/auth-dialog/main.c
++++ b/auth-dialog/main.c
+@@ -109,6 +109,12 @@ typedef struct auth_ui_data {
+ 
+ 	GCond *cert_response_changed;
+ 	enum certificate_response cert_response;
++
++#if GLIB_CHECK_VERSION (2,31,0)
++	/* Ick. FFS, why does glib deprecate stuff so quickly? */
++	GCond _gconds[3];
++	GMutex _gmutex;
++#endif
+ } auth_ui_data;
+ 
+ enum {
+@@ -134,7 +140,11 @@ static void ssl_box_add_error(auth_ui_data *ui_data, const char *msg)
+ {
+ 	GtkWidget *hbox, *text, *image;
+ 
++#if GTK_CHECK_VERSION(3,1,6)
++	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 8);
++#else
+ 	hbox = gtk_hbox_new(FALSE, 8);
++#endif
+ 	gtk_box_pack_start(GTK_BOX(ui_data->ssl_box), hbox, FALSE, FALSE, 0);
+ 
+ 	image = gtk_image_new_from_stock(GTK_STOCK_DIALOG_ERROR,
+@@ -151,7 +161,11 @@ static void ssl_box_add_notice(auth_ui_data *ui_data, const char *msg)
+ {
+ 	GtkWidget *hbox, *text, *image;
+ 
++#if GTK_CHECK_VERSION(3,1,6)
++	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 8);
++#else
+ 	hbox = gtk_hbox_new(FALSE, 8);
++#endif
+ 	gtk_box_pack_start(GTK_BOX(ui_data->ssl_box), hbox, FALSE, FALSE, 0);
+ 
+ 	image = gtk_image_new_from_stock(GTK_STOCK_DIALOG_WARNING,
+@@ -291,7 +305,11 @@ static gboolean ui_write_prompt (ui_fragment_data *data)
+ 		visible = (data->opt->type == OC_FORM_OPT_TEXT);
+ 	}
+ 
++#if GTK_CHECK_VERSION(3,1,6)
++	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
++#else
+ 	hbox = gtk_hbox_new(FALSE, 0);
++#endif
+ 	gtk_box_pack_start(GTK_BOX(data->ui_data->ssl_box), hbox, FALSE, FALSE, 0);
+ 
+ 	text = gtk_label_new(label);
+@@ -323,7 +341,11 @@ static gboolean ui_add_select (ui_fragment_data *data)
+ 	struct oc_form_opt_select *sopt = (void *)data->opt;
+ 	int i;
+ 
++#if GTK_CHECK_VERSION(3,1,6)
++	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
++#else
+ 	hbox = gtk_hbox_new(FALSE, 0);
++#endif
+ 	gtk_box_pack_start(GTK_BOX(data->ui_data->ssl_box), hbox, FALSE, FALSE, 0);
+ 
+ 	text = gtk_label_new(data->opt->label);
+@@ -1219,12 +1241,20 @@ static void build_main_dialog(auth_ui_data *ui_data)
+ 				 G_CALLBACK(gtk_main_quit), NULL);
+ 	g_free(title);
+ 
++#if GTK_CHECK_VERSION(3,1,6)
++	vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 8);
++#else
+ 	vbox = gtk_vbox_new(FALSE, 8);
++#endif
+ 	gtk_box_pack_start(GTK_BOX (gtk_dialog_get_content_area(GTK_DIALOG (ui_data->dialog))), vbox, TRUE, TRUE, 0);
+ 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 8);
+ 	gtk_widget_show(vbox);
+ 
++#if GTK_CHECK_VERSION(3,1,6)
++	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 4);
++#else
+ 	hbox = gtk_hbox_new(FALSE, 4);
++#endif
+ 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+ 	gtk_widget_show(hbox);
+ 
+@@ -1260,7 +1290,11 @@ static void build_main_dialog(auth_ui_data *ui_data)
+ 	gtk_widget_set_size_request(frame, -1, -1);
+ 	gtk_widget_show(frame);
+ 
++#if GTK_CHECK_VERSION(3,1,6)
++	frame_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 4);
++#else
+ 	frame_box = gtk_vbox_new(FALSE, 4);
++#endif
+ 	gtk_container_set_border_width(GTK_CONTAINER(frame_box), 8);
+ 	gtk_container_add(GTK_CONTAINER(frame), frame_box);
+ 	gtk_widget_show(frame_box);
+@@ -1274,11 +1308,19 @@ static void build_main_dialog(auth_ui_data *ui_data)
+ 	gtk_widget_set_sensitive(ui_data->getting_form_label, FALSE);
+ 	gtk_box_pack_start(GTK_BOX(frame_box), ui_data->getting_form_label, FALSE, FALSE, 0);
+ 
++#if GTK_CHECK_VERSION(3,1,6)
++	ui_data->ssl_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 4);
++#else
+ 	ui_data->ssl_box = gtk_vbox_new(FALSE, 4);
++#endif
+ 	gtk_box_pack_start(GTK_BOX(frame_box), ui_data->ssl_box, FALSE, FALSE, 0);
+ 	gtk_widget_show(ui_data->ssl_box);
+ 
++#if GTK_CHECK_VERSION(3,1,6)
++	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
++#else
+ 	hbox = gtk_hbox_new (FALSE, 6);
++#endif
+ 	gtk_box_pack_end(GTK_BOX(frame_box), hbox, FALSE, FALSE, 0);
+ 	gtk_widget_show(hbox);
+ 
+@@ -1329,10 +1371,21 @@ static auth_ui_data *init_ui_data (char *vpn_name, GHashTable *options, GHashTab
+ 	ui_data->retval = 1;
+ 
+ 	ui_data->form_entries = g_queue_new();
++#if GLIB_CHECK_VERSION(2,31,0)
++	ui_data->form_mutex = &ui_data->_gmutex;
++	ui_data->form_retval_changed = &ui_data->_gconds[0];
++	ui_data->form_shown_changed = &ui_data->_gconds[1];
++	ui_data->cert_response_changed = &ui_data->_gconds[2];
++	g_mutex_init(ui_data->form_mutex);
++	g_cond_init(ui_data->form_retval_changed);
++	g_cond_init(ui_data->form_shown_changed);
++	g_cond_init(ui_data->cert_response_changed);
++#else
+ 	ui_data->form_mutex = g_mutex_new();
+ 	ui_data->form_retval_changed = g_cond_new();
+ 	ui_data->form_shown_changed = g_cond_new();
+ 	ui_data->cert_response_changed = g_cond_new();
++#endif
+ 	ui_data->vpn_name = vpn_name;
+ 	ui_data->options = options;
+ 	ui_data->secrets = secrets;
+@@ -1424,7 +1477,6 @@ int main (int argc, char **argv)
+ 		return 1;
+ 	}
+ 
+-	g_thread_init (NULL);
+ 	gtk_init(0, NULL);
+ 
+ 	_ui_data = init_ui_data(vpn_name, options, secrets);

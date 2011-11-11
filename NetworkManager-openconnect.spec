@@ -9,13 +9,14 @@
 Summary:   NetworkManager VPN integration for openconnect
 Name:      NetworkManager-openconnect
 Version:   0.9.0
-Release:   4%{snapshot}%{?dist}
+Release:   5%{snapshot}%{?dist}
 License:   GPLv2+, LGPLv2.1
 Group:     System Environment/Base
 URL:       http://www.gnome.org/projects/NetworkManager/
 Source:    %{name}-%{realversion}%{snapshot}.tar.bz2
 Patch0:    0001-Look-for-openconnect-binary-in-usr-sbin-too.patch
 Patch1:    0001-Fix-build-failure-include-glib.h-not-glib-gtypes.h-d.patch
+Patch2:    fix-glib-fuckage.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
@@ -49,6 +50,7 @@ with NetworkManager and the GNOME desktop
 %setup -q -n NetworkManager-openconnect-%{realversion}
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 autoreconf
@@ -105,6 +107,9 @@ fi
 %{_datadir}/gnome-vpn-properties/openconnect/nm-openconnect-dialog.ui
 
 %changelog
+* Tue Nov 08 2011 David Woodhouse <David.Woodhouse@intel.com> - 0.9.0-5
+- Deal with stupid premature glib API breakage.
+
 * Tue Nov 08 2011 David Woodhouse <David.Woodhouse@intel.com> - 0.9.0-4
 - Fix build failure due to including <glib/gtypes.h> directly.
 
