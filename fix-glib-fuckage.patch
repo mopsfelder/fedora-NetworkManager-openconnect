@@ -1,5 +1,5 @@
 --- NetworkManager-openconnect-0.9.0/auth-dialog/main.c.glibfuckage	2011-08-19 21:56:01.000000000 +0100
-+++ NetworkManager-openconnect-0.9.0/auth-dialog/main.c	2011-11-11 00:38:20.017088964 +0000
++++ NetworkManager-openconnect-0.9.0/auth-dialog/main.c	2011-11-11 00:57:59.968414386 +0000
 @@ -110,6 +110,12 @@ typedef struct auth_ui_data {
  
  	GCond *cert_response_changed;
@@ -49,7 +49,20 @@
  	gtk_box_pack_start(GTK_BOX(data->ui_data->ssl_box), hbox, FALSE, FALSE, 0);
  
  	text = gtk_label_new(data->opt->label);
-@@ -1197,12 +1215,20 @@ static void build_main_dialog(auth_ui_da
+@@ -1125,8 +1143,12 @@ static void connect_host(auth_ui_data *u
+ 	g_hash_table_insert (ui_data->success_secrets, g_strdup("lasthost"),
+ 			     g_strdup(host->hostname));
+ 
++#if GLIB_CHECK_VERSION(2,31,0)
++	thread = g_thread_new("obtain_cookie", (GThreadFunc)obtain_cookie, ui_data);
++#else
+ 	thread = g_thread_create((GThreadFunc)obtain_cookie, ui_data,
+ 				 FALSE, NULL);
++#endif
+ 	(void)thread;
+ }
+ 
+@@ -1197,12 +1219,20 @@ static void build_main_dialog(auth_ui_da
  				 G_CALLBACK(gtk_main_quit), NULL);
  	g_free(title);
  
@@ -70,7 +83,7 @@
  	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
  	gtk_widget_show(hbox);
  
-@@ -1238,7 +1264,11 @@ static void build_main_dialog(auth_ui_da
+@@ -1238,7 +1268,11 @@ static void build_main_dialog(auth_ui_da
  	gtk_widget_set_size_request(frame, -1, -1);
  	gtk_widget_show(frame);
  
@@ -82,7 +95,7 @@
  	gtk_container_set_border_width(GTK_CONTAINER(frame_box), 8);
  	gtk_container_add(GTK_CONTAINER(frame), frame_box);
  	gtk_widget_show(frame_box);
-@@ -1252,11 +1282,19 @@ static void build_main_dialog(auth_ui_da
+@@ -1252,11 +1286,19 @@ static void build_main_dialog(auth_ui_da
  	gtk_widget_set_sensitive(ui_data->getting_form_label, FALSE);
  	gtk_box_pack_start(GTK_BOX(frame_box), ui_data->getting_form_label, FALSE, FALSE, 0);
  
@@ -102,7 +115,7 @@
  	gtk_box_pack_end(GTK_BOX(frame_box), hbox, FALSE, FALSE, 0);
  	gtk_widget_show(hbox);
  
-@@ -1307,10 +1345,21 @@ static auth_ui_data *init_ui_data (char
+@@ -1307,10 +1349,21 @@ static auth_ui_data *init_ui_data (char
  	ui_data->retval = 1;
  
  	ui_data->form_entries = g_queue_new();
@@ -124,11 +137,13 @@
  	ui_data->vpn_name = vpn_name;
  	ui_data->options = options;
  	ui_data->secrets = secrets;
-@@ -1402,7 +1451,6 @@ int main (int argc, char **argv)
+@@ -1402,7 +1455,9 @@ int main (int argc, char **argv)
  		return 1;
  	}
  
--	g_thread_init (NULL);
++#if !GLIB_CHECK_VERSION(2,31,0)
+ 	g_thread_init (NULL);
++#endif
  	gtk_init(0, NULL);
  
  	_ui_data = init_ui_data(vpn_name, options, secrets);
