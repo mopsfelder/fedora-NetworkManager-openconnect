@@ -1,7 +1,7 @@
 From ca8a39d1bb999ba98ead45e53041fc3ea28ecd5c Mon Sep 17 00:00:00 2001
 From: David Woodhouse <David.Woodhouse@intel.com>
 Date: Thu, 10 Nov 2011 23:19:32 +0000
-Subject: [PATCH] Fix build failure: include <glib.h>, not <glib/gtypes.h>
+Subject: [PATCH 1/5] Fix build failure: include <glib.h>, not <glib/gtypes.h>
  directly.
 
 ---
@@ -23,5 +23,5 @@ index e454f82..684a5b3 100644
  
  #define NM_TYPE_OPENCONNECT_PLUGIN            (nm_openconnect_plugin_get_type ())
 -- 
-1.7.7
+1.7.7.2
 

@@ -1,22 +1,25 @@
-%define nm_version          1:0.8.998
+%define nm_version          1:0.9.2
 %define dbus_version        1.1
 %define gtk3_version        3.0.0
 %define openconnect_version 3.00
 
 %define snapshot %{nil}
-%define realversion 0.9.0
+%define realversion 0.9.2.0
 
 Summary:   NetworkManager VPN integration for openconnect
 Name:      NetworkManager-openconnect
-Version:   0.9.0
-Release:   5%{snapshot}%{?dist}
+Version:   0.9.2.0
+Release:   1%{snapshot}%{?dist}
 License:   GPLv2+, LGPLv2.1
 Group:     System Environment/Base
 URL:       http://www.gnome.org/projects/NetworkManager/
-Source:    %{name}-%{realversion}%{snapshot}.tar.bz2
-Patch0:    0001-Look-for-openconnect-binary-in-usr-sbin-too.patch
+Source:    ftp://ftp.gnome.org/pub/GNOME/sources/NetworkManager-openconnect/0.9/%{name}-%{realversion}%{snapshot}.tar.xz
+# all from David Woodhouse, upstream: fix for glib/GTK+ deprecations
 Patch1:    0001-Fix-build-failure-include-glib.h-not-glib-gtypes.h-d.patch
-Patch2:    fix-glib-fuckage.patch
+Patch2:    0002-Switch-to-gtk_box_new.patch
+Patch3:    0003-Drop-g_thread_init.patch
+Patch4:    0004-Handle-stupid-premature-GCond-and-GMutex-API-breakag.patch
+Patch5:    0005-Use-g_thread_new-instead-of-g_thread_create.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
@@ -48,9 +51,11 @@ with NetworkManager and the GNOME desktop
 
 %prep
 %setup -q -n NetworkManager-openconnect-%{realversion}
-%patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
 
 %build
 autoreconf
@@ -107,6 +112,10 @@ fi
 %{_datadir}/gnome-vpn-properties/openconnect/nm-openconnect-dialog.ui
 
 %changelog
+* Thu Nov 10 2011 Adam Williamson <awilliam@redhat.com> - 0.9.2.0-1
+- bump to 0.9.2.0
+- pull david's patches properly from upstream
+
 * Tue Nov 08 2011 David Woodhouse <David.Woodhouse@intel.com> - 0.9.0-5
 - Deal with stupid premature glib API breakage.
 
