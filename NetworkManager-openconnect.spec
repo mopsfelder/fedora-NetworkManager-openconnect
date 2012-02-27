@@ -9,7 +9,7 @@
 Summary:   NetworkManager VPN integration for openconnect
 Name:      NetworkManager-openconnect
 Version:   0.9.2.0
-Release:   2%{snapshot}%{?dist}
+Release:   3%{snapshot}%{?dist}
 License:   GPLv2+, LGPLv2.1
 Group:     System Environment/Base
 URL:       http://www.gnome.org/projects/NetworkManager/
@@ -21,15 +21,13 @@ Patch3:    0003-Drop-g_thread_init.patch
 Patch4:    0004-Handle-stupid-premature-GCond-and-GMutex-API-breakag.patch
 Patch5:    0005-Use-g_thread_new-instead-of-g_thread_create.patch
 
-BuildRoot: %{_tmppath}/%{name}-%{version}-root
-
 BuildRequires: gtk3-devel             >= %{gtk3_version}
 BuildRequires: dbus-devel             >= %{dbus_version}
 BuildRequires: dbus-glib-devel        >= 0.74
 BuildRequires: NetworkManager-devel   >= %{nm_version}
 BuildRequires: NetworkManager-glib-devel >= %{nm_version}
 BuildRequires: GConf2-devel
-BuildRequires: gnome-keyring-devel
+BuildRequires: libgnome-keyring-devel
 BuildRequires: intltool gettext
 BuildRequires: autoconf automake libtool
 BuildRequires: pkgconfig(libxml-2.0)
@@ -63,16 +61,12 @@ autoreconf
 make %{?_smp_mflags}
 
 %install
-rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
 rm -f %{buildroot}%{_libdir}/NetworkManager/lib*.la
 rm -f %{buildroot}%{_libdir}/NetworkManager/lib*.a
 
 %find_lang %{name}
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %pre
 %{_sbindir}/groupadd -r nm-openconnect &>/dev/null || :
@@ -112,6 +106,9 @@ fi
 %{_datadir}/gnome-vpn-properties/openconnect/nm-openconnect-dialog.ui
 
 %changelog
+* Sun Feb 26 2012 Peter Robinson <pbrobinson@fedoraproject.org> - 0.9.2.0-3
+- Update for unannounced gnome-keyring devel changes
+
 * Thu Jan 12 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.9.2.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
