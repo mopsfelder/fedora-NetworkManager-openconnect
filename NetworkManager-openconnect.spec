@@ -9,7 +9,7 @@
 Summary:   NetworkManager VPN integration for openconnect
 Name:      NetworkManager-openconnect
 Version:   0.9.4.0
-Release:   3%{snapshot}%{?dist}
+Release:   4%{snapshot}%{?dist}
 License:   GPLv2+, LGPLv2.1
 Group:     System Environment/Base
 URL:       http://www.gnome.org/projects/NetworkManager/
@@ -42,8 +42,6 @@ BuildRequires: openconnect-devel
 Requires: NetworkManager   >= %{nm_version}
 Requires: openconnect      >= %{openconnect_version}
 
-Requires(post):   /sbin/ldconfig
-Requires(postun): /sbin/ldconfig
 Requires(pre): %{_sbindir}/useradd
 Requires(pre): %{_sbindir}/groupadd
 
@@ -82,7 +80,6 @@ rm -f %{buildroot}%{_libdir}/NetworkManager/lib*.a
                      -g nm-openconnect nm-openconnect &>/dev/null || :
 
 %post
-/sbin/ldconfig
 /usr/bin/update-desktop-database &> /dev/null || :
 touch --no-create %{_datadir}/icons/hicolor
 if [ -x %{_bindir}/gtk-update-icon-cache ]; then
@@ -91,7 +88,6 @@ fi
 
 
 %postun
-/sbin/ldconfig
 /usr/bin/update-desktop-database &> /dev/null || :
 touch --no-create %{_datadir}/icons/hicolor
 if [ -x %{_bindir}/gtk-update-icon-cache ]; then
@@ -113,6 +109,9 @@ fi
 %{_datadir}/gnome-vpn-properties/openconnect/nm-openconnect-dialog.ui
 
 %changelog
+* Wed Jun 13 2012 Ville Skyttä <ville.skytta@iki.fi> - 0.9.4.0-4
+- Remove unnecessary ldconfig calls from scriptlets (#737330).
+
 * Fri May 25 2012 David Woodhouse <David.Woodhouse@intel.com> - 0.9.4-3
 - Fix cancel-after-failure-causes-next-attempt-to-immediately-abort bug.
 
