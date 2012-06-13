@@ -1,7 +1,7 @@
 From 12e173e93b1fc2559c24d870bcf1d0aba41e3d32 Mon Sep 17 00:00:00 2001
 From: David Woodhouse <David.Woodhouse@intel.com>
 Date: Tue, 22 May 2012 10:12:48 +0100
-Subject: [PATCH 7/7] Fix: Hitting cancel after failure causes the next
+Subject: [PATCH 07/20] Fix: Hitting cancel after failure causes the next
  attempt to abort immediately
 
 If you cancel one connection while it's connecting, you get the 'Socket
@@ -20,7 +20,7 @@ from the cancel pipes before starting a connection, just in case.
 Reported by Mike Miller.
 ---
  auth-dialog/main.c |    6 ++++--
- 1 files changed, 4 insertions(+), 2 deletions(-)
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/auth-dialog/main.c b/auth-dialog/main.c
 index fd14459..8a59e25 100644
@@ -54,5 +54,5 @@ index fd14459..8a59e25 100644
  	 * TODO: this is probably not the way to go... */
  	openconnect_reset_ssl(ui_data->vpninfo);
 -- 
-1.7.7.6
+1.7.10.2
 

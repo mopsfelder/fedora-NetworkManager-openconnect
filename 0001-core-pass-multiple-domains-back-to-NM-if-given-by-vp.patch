@@ -1,0 +1,55 @@
+From 237e625883d251cb922d90c8cd7fa91fb9cc6c08 Mon Sep 17 00:00:00 2001
+From: Evan Broder <evan@ebroder.net>
+Date: Thu, 15 Mar 2012 14:57:12 -0700
+Subject: [PATCH] core: pass multiple domains back to NM if given by vpnc
+
+---
+ src/nm-vpnc-service-vpnc-helper.c |   25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/src/nm-vpnc-service-vpnc-helper.c b/src/nm-vpnc-service-vpnc-helper.c
+index 21942f6..bc91771 100644
+--- a/src/nm-openconnect-service-openconnect-helper.c
++++ b/src/nm-openconnect-service-openconnect-helper.c
+@@ -198,6 +198,26 @@ addr_list_to_gvalue (const char *str)
+ }
+ 
+ static GValue *
++split_dns_list_to_gvalue (const char *str)
++{
++	GValue *val;
++	char **split;
++
++	if (!str || strlen (str) < 1)
++		return NULL;
++
++	split = g_strsplit (str, ",", -1);
++	if (g_strv_length (split) == 0)
++		return NULL;
++
++	val = g_slice_new0 (GValue);
++	g_value_init (val, G_TYPE_STRV);
++	g_value_take_boxed (val, split);
++
++	return val;
++}
++
++static GValue *
+ get_routes (void)
+ {
+ 	GValue *value = NULL;
+@@ -389,6 +409,11 @@ main (int argc, char *argv[])
+ 	if (val)
+ 		g_hash_table_insert (config, NM_VPN_PLUGIN_IP4_CONFIG_DOMAIN, val);
+ 
++	/* Split DNS domains */
++	val = split_dns_list_to_gvalue (getenv ("CISCO_SPLIT_DNS"));
++	if (val)
++		g_hash_table_insert (config, NM_VPN_PLUGIN_IP4_CONFIG_DOMAINS, val);
++
+ 	/* Routes */
+ 	val = get_routes ();
+ 	if (val) {
+-- 
+1.7.10.2
+
