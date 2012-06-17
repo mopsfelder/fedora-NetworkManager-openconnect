@@ -9,7 +9,7 @@
 Summary:   NetworkManager VPN integration for openconnect
 Name:      NetworkManager-openconnect
 Version:   0.9.4.0
-Release:   6%{snapshot}%{?dist}
+Release:   7%{snapshot}%{?dist}
 License:   GPLv2+, LGPLv2.1
 Group:     System Environment/Base
 URL:       http://www.gnome.org/projects/NetworkManager/
@@ -97,6 +97,9 @@ fi
 %{_datadir}/gnome-vpn-properties/openconnect/nm-openconnect-dialog.ui
 
 %changelog
+* Sun Jun 17 2012 David Woodhouse <David.Woodhouse@intel.com> - 0.9.4-7
+- Add missing patch to git
+
 * Sat Jun 16 2012 David Woodhouse <David.Woodhouse@intel.com> - 0.9.4-6
 - Add gnome-keyring support for saving passwords (bgo #638861)
 
