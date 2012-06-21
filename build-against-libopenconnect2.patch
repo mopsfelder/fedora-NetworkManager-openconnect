@@ -1,0 +1,1058 @@
+commit 9867721f2e612499c5f2483479e170d14245138f
+Author: David Woodhouse <David.Woodhouse@intel.com>
+Date:   Wed Jun 20 16:31:41 2012 +0100
+
+    Explicitly link against libxml2 and libgthread
+
+commit 3ac64706c4079ad949008afa7e4a35e3439bdd41
+Author: David Woodhouse <David.Woodhouse@intel.com>
+Date:   Wed Jun 20 16:22:46 2012 +0100
+
+    Fix more OpenSSL dependencies
+
+commit 3edb0650818880385db2a24a530a5a7747e8d36c
+Author: Kjartan Maraas <kmaraas@gnome.org>
+Date:   Sun Jun 10 19:09:37 2012 +0200
+
+    Mark two strings for translation
+    (cherry picked from commit 02a75b1ce0ba38d9b447ce09dea61354cfdce9a0)
+
+commit 642c9cda9639544fb9ee474bbee7fdc21be9624d
+Author: David Woodhouse <David.Woodhouse@intel.com>
+Date:   Fri Jun 8 03:34:15 2012 +0100
+
+    Support new libopenconnect
+    (cherry picked from commit 9150dc373ec398d0260aa684d2d04960fb47359c)
+    
+    Conflicts:
+    	auth-dialog/main.c
+
+commit a210671c3378b6b4172562e6578c8e322501d966
+Author: David Woodhouse <David.Woodhouse@intel.com>
+Date:   Fri Jun 1 00:21:09 2012 +0100
+
+    Make OpenSSL UI support optional
+    
+    We only want this if libopenconnect was built against OpenSSL, not GnuTLS.
+    
+    For GnuTLS we'll want a PIN helper function, which will come later. It's
+    not needed for basic file passwords; only for smart cards.
+    (cherry picked from commit 192b8a6904a44c9772ece56f10d36aee6d45bb2a)
+    
+    Conflicts:
+    	auth-dialog/main.c
+
+commit 70690fdc95c5f95e17e82727bf208d97e0caa383
+Author: David Woodhouse <David.Woodhouse@intel.com>
+Date:   Fri Jun 1 00:20:52 2012 +0100
+
+    Use GChecksum for sha1, not OpenSSL
+    (cherry picked from commit a79c67b6c9ed4271651fc0b367f6d3439b8013af)
+    
+    Conflicts:
+    	auth-dialog/main.c
+
+commit d2e4021eee1fb148499591e114bcac693b15a1c0
+Author: David Woodhouse <David.Woodhouse@intel.com>
+Date:   Thu May 31 23:31:36 2012 +0100
+
+    Update to SSL-library-agnostic API
+    
+    This should now build against either the OpenSSL or GnuTLS version of
+    libopenconnect. We still need to register either the OpenSSL UI or the
+    GnuTLS PIN helper as appropriate though.
+    (cherry picked from commit d91c6204bbff0b5ac5555c9781ee203cf4c62fba)
+    
+    Conflicts:
+    	auth-dialog/main.c
+
+commit 526cdf5c8224e411eb9a79b24690c5ef40d01fad
+Author: David Woodhouse <David.Woodhouse@intel.com>
+Date:   Tue May 22 10:12:48 2012 +0100
+
+    Fix: Hitting cancel after failure causes the next attempt to abort immediately
+    
+    If you cancel one connection while it's connecting, you get the 'Socket
+    connecton cancelled' error displayed as it gives up. Or a normal failure
+    should also suffice. The 'cancel' button is active at this point.
+    $DEITY knows why. It shouldn't be, because there's nothing to cancel.
+    
+    If you hit it, a byte is written to the cancel_pipe. Then if you attempt
+    to connect to a new host, your connection attempt aborts immediately because
+    the cancel pipe is readable.
+    
+    First, ensure the cancel button is marked as not sensitive after handling
+    an error return in cookie_obtained(). And also make sure we clear all bytes
+    from the cancel pipes before starting a connection, just in case.
+    
+    Reported by Mike Miller.
+    (cherry picked from commit 12e173e93b1fc2559c24d870bcf1d0aba41e3d32)
+
+commit aaa3b269e862e0acbe4084539e4fd5aef03b83cb
+Author: David Woodhouse <David.Woodhouse@intel.com>
+Date:   Mon May 21 15:12:16 2012 +0100
+
+    Fix error check for write() failing.
+    
+    It's cosmetic, since we're doing nothing anyway and we only did it to shut
+    the compiler up. But we ought to get it right.
+    (cherry picked from commit 64be7353da3f9bb06f4e852d1fe604dea982f673)
+
+commit 9f561809b1445bca20a6ef1b6f77debac1592ad0
+Author: David Woodhouse <David.Woodhouse@intel.com>
+Date:   Mon May 21 13:47:38 2012 +0100
+
+    Fix compiler warnings about ignoring return value from pipe() and write()
+    
+    Not that we can really do much, but we can at least shut the compiler up.
+    (cherry picked from commit de9f32757689d9e8dbeed2557a39e7e6cf71dc1b)
+    
+    Conflicts:
+    	auth-dialog/main.c
+
+commit 44a607ec08159b1c7ce0a3cbce4c3fdbf96f9d6c
+Author: David Woodhouse <David.Woodhouse@intel.com>
+Date:   Sat May 12 20:36:51 2012 -0700
+
+    Implement proper cancellation now that libopenconnect supports it
+    (cherry picked from commit e4dc523828691207f97da3c767d9791500aff3bf)
+    
+    Conflicts:
+    	auth-dialog/main.c
+
+commit 7ca83abf6170bed84e7eb502c18f975984484e76
+Author: David Woodhouse <David.Woodhouse@intel.com>
+Date:   Thu Mar 29 13:40:21 2012 +0100
+
+    Create persistent tundev on demand for each connection.
+    
+    We theoretically support having more than one VPN connection at a time.
+    That's not going to work too well if we create *one* tun device at
+    startup, and use that device for all the connections.
+    
+    Create the device at connection time, and tear it down when openconnect
+    dies.
+    (cherry picked from commit 85d9cebaf76c28d356bb0eb8da0cd364ab8f6b78)
+
+commit e2c56e14bf86169fab25d6da29a75dd0efd13e43
+Author: David Woodhouse <David.Woodhouse@intel.com>
+Date:   Thu Mar 29 13:15:06 2012 +0100
+
+    Check for success when dropping privs.
+    
+    If the nm-openconnect user exists, but setuid/setgid fails, then abort.
+    
+    Error handling is somewhat suboptimal here, since it's done in the
+    pre-spawn function in the child. But it should never happen anyway; the
+    only reason we're looking at it is because this code path was
+    (correctly) highlighted in a security review.
+    (cherry picked from commit f88cd27978fd8d4bcdfee96c6150b418719effb9)
+
+commit c417e31386e6a231385f01e46c534f052b71df50
+Author: Piotr Drąg <piotrdrag@gmail.com>
+Date:   Thu Nov 10 11:46:55 2011 +0100
+
+    Updated Polish translation
+
+diff --git a/auth-dialog/Makefile.am b/auth-dialog/Makefile.am
+index b144681..3f36f26 100644
+--- a/auth-dialog/Makefile.am
++++ b/auth-dialog/Makefile.am
+@@ -4,6 +4,7 @@ libexec_PROGRAMS = nm-openconnect-auth-dialog
+ 
+ nm_openconnect_auth_dialog_CPPFLAGS = \
+ 	$(NETWORKMANAGER_CFLAGS) \
++	$(LIBXML_CFLAGS) \
+ 	$(GTHREAD_CFLAGS) \
+ 	$(GTK_CFLAGS) \
+ 	$(GCONF_CFLAGS) \
+@@ -24,6 +25,8 @@ nm_openconnect_auth_dialog_SOURCES = \
+ nm_openconnect_auth_dialog_LDADD = \
+ 	$(GTK_LIBS) \
+ 	$(NETWORKMANAGER_LIBS) \
++	$(LIBXML_LIBS) \
++	$(GTHREAD_LIBS) \
+ 	$(GCONF_LIBS) \
+ 	$(OPENCONNECT_LIBS)
+ 
+diff --git a/auth-dialog/main.c b/auth-dialog/main.c
+index 249dfe2..ea728b6 100644
+--- a/auth-dialog/main.c
++++ b/auth-dialog/main.c
+@@ -1,7 +1,7 @@
+ /*
+  * OpenConnect (SSL + DTLS) VPN client
+  *
+- * Copyright © 2008-2010 Intel Corporation.
++ * Copyright © 2008-2012 Intel Corporation.
+  *
+  * Authors: Jussi Kukkonen <jku@linux.intel.com>
+  *          David Woodhouse <dwmw2@infradead.org>
+@@ -40,18 +40,35 @@
+ 
+ #include <gtk/gtk.h>
+ #include <glib/gi18n.h>
++#include <glib-unix.h>
+ 
+ #include "auth-dlg-settings.h"
+ 
+ #include "openconnect.h"
+ 
+-#include <openssl/ssl.h>
+-#include <openssl/bio.h>
+-#include <openssl/ui.h>
++#if OPENCONNECT_API_VERSION_MAJOR == 1
++#define openconnect_vpninfo_new openconnect_vpninfo_new_with_cbdata
++#define openconnect_init_ssl openconnect_init_openssl
++#endif
+ 
+ static GConfClient *_gcl;
+ static char *_config_path;
+ 
++#ifndef OPENCONNECT_CHECK_VER
++#define OPENCONNECT_CHECK_VER(x,y) 0
++#endif
++
++#if !OPENCONNECT_CHECK_VER(1,5)
++#define OPENCONNECT_X509 X509
++#define OPENCONNECT_OPENSSL
++#endif
++
++#ifdef OPENCONNECT_OPENSSL
++#include <openssl/ssl.h>
++#include <openssl/bio.h>
++#include <openssl/ui.h>
++#endif
++
+ static char *lasthost;
+ 
+ typedef struct vpnhost {
+@@ -93,6 +110,7 @@ typedef struct auth_ui_data {
+ 	int retval;
+ 	int cookie_retval;
+ 
++	int cancel_pipes[2];
+ 	gboolean cancelled; /* fully cancel the whole challenge-response series */
+ 	gboolean getting_cookie;
+ 
+@@ -191,7 +209,9 @@ static void ssl_box_clear(auth_ui_data *ui_data)
+ typedef struct ui_fragment_data {
+ 	GtkWidget *widget;
+ 	auth_ui_data *ui_data;
++#ifdef OPENCONNECT_OPENSSL
+ 	UI_STRING *uis;
++#endif
+ 	struct oc_form_opt *opt;
+ 	char *entry_text;
+ 	int grab_focus;
+@@ -202,6 +222,7 @@ static void entry_activate_cb(GtkWidget *widget, auth_ui_data *ui_data)
+ 	gtk_dialog_response(GTK_DIALOG(ui_data->dialog), AUTH_DIALOG_RESPONSE_LOGIN);
+ }
+ 
++#ifdef OPENCONNECT_OPENSSL
+ static void do_check_visibility(ui_fragment_data *data, gboolean *visible)
+ {
+ 	int min_len;
+@@ -214,13 +235,14 @@ static void do_check_visibility(ui_fragment_data *data, gboolean *visible)
+ 	if (min_len && (!data->entry_text || strlen(data->entry_text) < min_len))
+ 		*visible = FALSE;
+ }
+-
++#endif
+ static void evaluate_login_visibility(auth_ui_data *ui_data)
+ {
+ 	gboolean visible = TRUE;
++#ifdef OPENCONNECT_OPENSSL
+ 	g_queue_foreach(ui_data->form_entries, (GFunc)do_check_visibility,
+ 			&visible);
+-
++#endif
+ 	gtk_widget_set_sensitive (ui_data->login_button, visible);
+ }
+ 
+@@ -228,7 +250,9 @@ static void entry_changed(GtkEntry *entry, ui_fragment_data *data)
+ {
+ 	g_free (data->entry_text);
+ 	data->entry_text = g_strdup(gtk_entry_get_text(entry));
++#ifdef OPENCONNECT_OPENSSL
+ 	evaluate_login_visibility(data->ui_data);
++#endif
+ }
+ 
+ static void do_override_label(ui_fragment_data *data, struct oc_choice *choice)
+@@ -257,6 +281,7 @@ static void combo_changed(GtkComboBox *combo, ui_fragment_data *data)
+ 			&sopt->choices[entry]);
+ }
+ 
++#ifdef OPENCONNECT_OPENSSL
+ static gboolean ui_write_error (ui_fragment_data *data)
+ {
+ 	ssl_box_add_error(data->ui_data, UI_get0_output_string(data->uis));
+@@ -274,6 +299,7 @@ static gboolean ui_write_info (ui_fragment_data *data)
+ 
+ 	return FALSE;
+ }
++#endif
+ 
+ static gboolean ui_write_prompt (ui_fragment_data *data)
+ {
+@@ -282,10 +308,13 @@ static gboolean ui_write_prompt (ui_fragment_data *data)
+ 	int visible;
+ 	const char *label;
+ 
++#ifdef OPENCONNECT_OPENSSL
+ 	if (data->uis) {
+ 		label = UI_get0_output_string(data->uis);
+ 		visible = UI_get_input_flags(data->uis) & UI_INPUT_FLAG_ECHO;
+-	} else {
++	} else 
++#endif
++	{
+ 		label = data->opt->label;
+ 		visible = (data->opt->type == OC_FORM_OPT_TEXT);
+ 	}
+@@ -370,6 +399,7 @@ static gboolean ui_show (auth_ui_data *ui_data)
+ 	return FALSE;
+ }
+ 
++#ifdef OPENCONNECT_OPENSSL
+ /* runs in worker thread */
+ static int ui_open(UI *ui)
+ {
+@@ -486,6 +516,7 @@ static int init_openssl_ui(void)
+ 	UI_set_default_method(ui_method);
+ 	return 0;
+ }
++#endif /* OPENCONNECT_OPENSSL */
+ 
+ static void remember_gconf_key(auth_ui_data *ui_data, char *key, char *value)
+ {
+@@ -580,10 +611,9 @@ static gboolean ui_form (struct oc_auth_form *form)
+ 	return ui_show(ui_data);
+ }
+ 
+-static int nm_process_auth_form (struct openconnect_info *vpninfo,
+-				 struct oc_auth_form *form)
++static int nm_process_auth_form (void *cbdata, struct oc_auth_form *form)
+ {
+-	auth_ui_data *ui_data = _ui_data; /* FIXME global */
++	auth_ui_data *ui_data = cbdata;
+ 	int response;
+ 
+ 	g_idle_add((GSourceFunc)ui_form, form);
+@@ -637,35 +667,47 @@ static int nm_process_auth_form (struct openconnect_info *vpninfo,
+ static char* get_title(const char *vpn_name)
+ {
+ 	if (vpn_name)
+-		return g_strdup_printf("Connect to VPN '%s'", vpn_name);
++		return g_strdup_printf(_("Connect to VPN '%s'"), vpn_name);
+ 	else
+-		return g_strdup("Connect to VPN");
++		return g_strdup(_("Connect to VPN"));
+ }
+ 
+ typedef struct cert_data {
+ 	auth_ui_data *ui_data;
+-	X509 *peer_cert;
++	OPENCONNECT_X509 *peer_cert;
+ 	const char *reason;
+ } cert_data;
+ 
++#if !OPENCONNECT_CHECK_VER(1,5)
++static char *openconnect_get_cert_details(struct openconnect_info *vpninfo,
++					  OPENCONNECT_X509 *cert)
++{
++        BIO *bp = BIO_new(BIO_s_mem());
++        BUF_MEM *certinfo;
++        char zero = 0;
++        char *ret;
++
++        X509_print_ex(bp, cert, 0, 0);
++        BIO_write(bp, &zero, 1);
++        BIO_get_mem_ptr(bp, &certinfo);
++
++        ret = strdup(certinfo->data);
++        BIO_free(bp);
++
++        return ret;
++}
++#endif
+ 
+ static gboolean user_validate_cert(cert_data *data)
+ {
+ 	auth_ui_data *ui_data = _ui_data; /* FIXME global */
+-	BIO *bp = BIO_new(BIO_s_mem());
+ 	char *title;
+-	BUF_MEM *certinfo;
+-	char zero = 0;
++	char *details;
+ 	GtkWidget *dlg, *text, *scroll;
+ 	GtkTextBuffer *buffer;
+ 	int result;
+ 
+-	/* There are probably better ways to do this -- getting individual
+-	   elements of the cert info and formatting it nicely in the dialog
+-	   box. But this will do for now... */
+-	X509_print_ex(bp, data->peer_cert, 0, 0);
+-	BIO_write(bp, &zero, 1);
+-	BIO_get_mem_ptr(bp, &certinfo);
++	details = openconnect_get_cert_details(ui_data->vpninfo, data->peer_cert);
+ 
+ 	title = get_title(data->ui_data->vpn_name);
+ 	dlg = gtk_message_dialog_new(NULL, 0, GTK_MESSAGE_QUESTION,
+@@ -689,7 +731,8 @@ static gboolean user_validate_cert(cert_data *data)
+ 
+ 	text = gtk_text_view_new();
+ 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text));
+-	gtk_text_buffer_set_text(buffer, certinfo->data, -1);
++	gtk_text_buffer_set_text(buffer, details, -1);
++	free(details);
+ 	gtk_text_view_set_editable(GTK_TEXT_VIEW(text), 0);
+ 	gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(text), FALSE);
+ 	gtk_container_add(GTK_CONTAINER(scroll), text);
+@@ -697,7 +740,6 @@ static gboolean user_validate_cert(cert_data *data)
+ 
+ 	result = gtk_dialog_run(GTK_DIALOG(dlg));
+ 
+-	BIO_free(bp);
+ 	gtk_widget_destroy(dlg);
+ 
+ 	g_mutex_lock (ui_data->form_mutex);
+@@ -712,19 +754,19 @@ static gboolean user_validate_cert(cert_data *data)
+ }
+ 
+ /* runs in worker thread */
+-static int validate_peer_cert(struct openconnect_info *vpninfo,
+-			      X509 *peer_cert, const char *reason)
++static int validate_peer_cert(void *cbdata,
++			      OPENCONNECT_X509 *peer_cert, const char *reason)
+ {
+ 	char *config_path = _config_path; /* FIXME global */
+ 	GConfClient *gcl = _gcl; /* FIXME global */
+-	auth_ui_data *ui_data = _ui_data; /* FIXME global */
+-	char fingerprint[EVP_MAX_MD_SIZE * 2 + 1];
++	auth_ui_data *ui_data = cbdata;
++	char fingerprint[41];
+ 	char *certs_data;
+ 	char *key;
+ 	int ret = 0;
+ 	cert_data *data;
+ 
+-	ret = openconnect_get_cert_sha1(vpninfo, peer_cert, fingerprint);
++	ret = openconnect_get_cert_sha1(ui_data->vpninfo, peer_cert, fingerprint);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -972,19 +1014,16 @@ if (0) {
+ 
+ 	xmlconfig = get_gconf_setting(gcl, config_path, NM_OPENCONNECT_KEY_XMLCONFIG);
+ 	if (xmlconfig) {
+-		unsigned char sha1[SHA_DIGEST_LENGTH];
+-		char sha1_text[SHA_DIGEST_LENGTH * 2];
+-		EVP_MD_CTX c;
+-		int i;
++		GChecksum *sha1;
++		const char *sha1_text;
+ 
+-		EVP_MD_CTX_init(&c);
+-		EVP_Digest(xmlconfig, strlen(xmlconfig), sha1, NULL, EVP_sha1(), NULL);
+-		EVP_MD_CTX_cleanup(&c);
++		sha1 = g_checksum_new (G_CHECKSUM_SHA1);
++		g_checksum_update (sha1, (gpointer) xmlconfig, strlen(xmlconfig));
++		sha1_text = g_checksum_get_string(sha1);
+ 
+-		for (i = 0; i < SHA_DIGEST_LENGTH; i++)
+-			sprintf(&sha1_text[i*2], "%02x", sha1[i]);
++		openconnect_set_xmlsha1 (vpninfo, (char *)sha1_text, strlen(sha1_text) + 1);
++		g_checksum_free(sha1);
+ 
+-		openconnect_set_xmlsha1(vpninfo, sha1_text, sizeof(sha1_text));
+ 		parse_xmlconfig(xmlconfig);
+ 		g_free(xmlconfig);
+ 	}
+@@ -1037,7 +1076,7 @@ static void populate_vpnhost_combo(auth_ui_data *ui_data)
+ 	}
+ }
+ 
+-static int write_new_config(struct openconnect_info *vpninfo, char *buf, int buflen)
++static int write_new_config(void *cbdata, char *buf, int buflen)
+ {
+ 	char *config_path = _config_path; /* FIXME global */
+ 	GConfClient *gcl = _gcl; /* FIXME global */
+@@ -1097,7 +1136,7 @@ static gboolean write_notice_real(char *message)
+ }
+ 
+ /* runs in worker thread */
+-static void write_progress(struct openconnect_info *info, int level, const char *fmt, ...)
++static void write_progress(void *cbdata, int level, const char *fmt, ...)
+ {
+ 	va_list args;
+ 	char *msg;
+@@ -1118,8 +1157,8 @@ static void write_progress(struct openconnect_info *info, int level, const char
+ 
+ static void print_peer_cert(struct openconnect_info *vpninfo)
+ {
+-	char fingerprint[EVP_MAX_MD_SIZE * 2 + 1];
+-	X509 *cert = openconnect_get_peer_cert(vpninfo);
++	char fingerprint[41];
++	OPENCONNECT_X509 *cert = openconnect_get_peer_cert(vpninfo);
+ 
+ 	if (cert && !openconnect_get_cert_sha1(vpninfo, cert, fingerprint))
+ 		printf("gwcert\n%s\n", fingerprint);
+@@ -1151,7 +1190,7 @@ static gboolean cookie_obtained(auth_ui_data *ui_data)
+ 						 GTK_STOCK_DIALOG_ERROR,
+ 						 GTK_ICON_SIZE_DIALOG);
+ 			gtk_widget_show_all(ui_data->ssl_box);
+-			gtk_widget_set_sensitive(ui_data->cancel_button, TRUE);
++			gtk_widget_set_sensitive(ui_data->cancel_button, FALSE);
+ 		}
+ 		ui_data->retval = 1;
+ 	} else if (!ui_data->cookie_retval) {
+@@ -1204,9 +1243,13 @@ static gboolean cookie_obtained(auth_ui_data *ui_data)
+ static gpointer obtain_cookie (auth_ui_data *ui_data)
+ {
+ 	int ret;
++	char cancelbuf;
+ 
+ 	ret = openconnect_obtain_cookie(ui_data->vpninfo);
+ 
++	/* Suck out the poison */
++	while (read(ui_data->cancel_pipes[0], &cancelbuf, 1) == 1)
++		;
+ 	ui_data->cookie_retval = ret;
+ 	g_idle_add ((GSourceFunc)cookie_obtained, ui_data);
+ 
+@@ -1219,6 +1262,7 @@ static void connect_host(auth_ui_data *ui_data)
+ 	vpnhost *host;
+ 	int i;
+ 	int host_nr;
++	char cancelbuf;
+ 
+ 	ui_data->cancelled = FALSE;
+ 	ui_data->getting_cookie = TRUE;
+@@ -1229,7 +1273,9 @@ static void connect_host(auth_ui_data *ui_data)
+ 
+ 	ssl_box_clear(ui_data);
+ 	gtk_widget_show(ui_data->getting_form_label);
+-
++	gtk_widget_set_sensitive (ui_data->cancel_button, TRUE);
++	while (read(ui_data->cancel_pipes[0], &cancelbuf, 1) == 1)
++		;
+ 	/* reset ssl context.
+ 	 * TODO: this is probably not the way to go... */
+ 	openconnect_reset_ssl(ui_data->vpninfo);
+@@ -1277,6 +1323,10 @@ static void dialog_response (GtkDialog *dialog, int response, auth_ui_data *ui_d
+ {
+ 	switch (response) {
+ 	case AUTH_DIALOG_RESPONSE_CANCEL:
++		if (write(ui_data->cancel_pipes[1], "x", 1) < 0) {
++			/* Pfft. Not a lot we can do about it */
++		}
++		/* Fall through... */
+ 	case AUTH_DIALOG_RESPONSE_LOGIN:
+ 		ssl_box_clear(ui_data);
+ 		if (ui_data->getting_cookie)
+@@ -1439,10 +1489,24 @@ static auth_ui_data *init_ui_data (char *vpn_name)
+ 	ui_data->form_shown_changed = g_cond_new();
+ 	ui_data->cert_response_changed = g_cond_new();
+ 	ui_data->vpn_name = vpn_name;
++	if (pipe(ui_data->cancel_pipes)) {
++		/* This should never happen, and the world is probably about
++		   to come crashing down around our ears. But attempt to cope
++		   by just disabling the cancellation support... */
++		ui_data->cancel_pipes[0] = -1;
++		ui_data->cancel_pipes[1] = -1;
++	}
++	g_unix_set_fd_nonblocking(ui_data->cancel_pipes[0], TRUE, NULL);
++	g_unix_set_fd_nonblocking(ui_data->cancel_pipes[1], TRUE, NULL);
+ 
+ 	ui_data->vpninfo = (void *)openconnect_vpninfo_new("OpenConnect VPN Agent (NetworkManager)",
+-						   validate_peer_cert, write_new_config,
+-						   nm_process_auth_form, write_progress);
++							   validate_peer_cert, write_new_config,
++							   nm_process_auth_form, write_progress,
++							   ui_data);
++
++#if OPENCONNECT_CHECK_VER(1,4)
++	openconnect_set_cancel_fd (ui_data->vpninfo, ui_data->cancel_pipes[0]);
++#endif  
+ 
+ #if 0
+ 	ui_data->vpninfo->proxy_factory = px_proxy_factory_new();
+@@ -1517,8 +1581,10 @@ int main (int argc, char **argv)
+ 	}
+ 	build_main_dialog(_ui_data);
+ 
++#ifdef OPENCONNECT_OPENSSL
+ 	init_openssl_ui();
+-	openconnect_init_openssl();
++#endif
++	openconnect_init_ssl();
+ 
+ 	if (get_gconf_autoconnect(_gcl, _config_path))
+ 		queue_connect_host(_ui_data);
+diff --git a/configure.ac b/configure.ac
+index 4684346..a7f864f 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -56,6 +56,10 @@ PKG_CHECK_MODULES(GTHREAD, gthread-2.0)
+ AC_SUBST(GTHREAD_CFLAGS)
+ AC_SUBST(GTHREAD_LIBS)
+ 
++PKG_CHECK_MODULES(LIBXML, libxml-2.0)
++AC_SUBST(LIBXML_CFLAGS)
++AC_SUBST(LIBXML_LIBS)
++
+ PKG_CHECK_MODULES(DBUS, dbus-glib-1 >= 0.74)
+ AC_SUBST(DBUS_CFLAGS)
+ AC_SUBST(DBUS_LIBS)
+@@ -74,7 +78,7 @@ if test x"$with_gnome" != xno; then
+ 	AC_SUBST(GNOMEKEYRING_LIBS)
+ 
+ 	if test x"$with_authdlg" != xno; then
+-		PKG_CHECK_MODULES(OPENCONNECT, openconnect)
++		PKG_CHECK_MODULES(OPENCONNECT, openconnect >= 3.02)
+ 		AC_SUBST(OPENCONNECT_CFLAGS)
+ 		AC_SUBST(OPENCONNECT_LIBS)
+ 	fi
+diff --git a/po/pl.po b/po/pl.po
+index 34fbc00..8a1cfb2 100644
+--- a/po/pl.po
++++ b/po/pl.po
+@@ -8,10 +8,11 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: network-manager-openconnect\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2010-03-19 13:10+0100\n"
+-"PO-Revision-Date: 2010-03-19 13:09+0100\n"
+-"Last-Translator: Tomasz Dominikowski <dominikowski@gmail.com>\n"
++"POT-Creation-Date: 2011-11-10 11:46+0100\n"
++"PO-Revision-Date: 2011-11-10 11:47+0100\n"
++"Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
+ "Language-Team: Polish <gnomepl@aviary.pl>\n"
++"Language: pl\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=utf-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+@@ -22,19 +23,54 @@ msgstr ""
+ "X-Poedit-Language: Polish\n"
+ "X-Poedit-Country: Poland\n"
+ 
+-#: ../properties/auth-helpers.c:63
++#: ../auth-dialog/main.c:673
++#, c-format
++msgid ""
++"Certificate from VPN server \"%s\" failed verification.\n"
++"Reason: %s\n"
++"Do you want to accept it?"
++msgstr ""
++"Sprawdzenie certyfikatu z serwera VPN \"%s\" się nie powiodło.\n"
++"Przyczyna: %s\n"
++"Zaakceptować go?"
++
++#: ../auth-dialog/main.c:1336
++msgid "VPN host"
++msgstr "Komputer VPN"
++
++#: ../auth-dialog/main.c:1356
++msgid "Automatically start connecting next time"
++msgstr "Automatyczne rozpoczynanie połączenie następnym razem"
++
++#: ../auth-dialog/main.c:1373
++msgid "Select a host to fetch the login form"
++msgstr "Wybór komputera, z którego pobrać login"
++
++#: ../auth-dialog/main.c:1378
++msgid "Contacting host, please wait..."
++msgstr "Łączenie się z komputerem, proszę czekać..."
++
++#: ../auth-dialog/main.c:1390
++msgid "_Login"
++msgstr "_Login"
++
++#: ../auth-dialog/main.c:1404
++msgid "Log"
++msgstr "Dziennik"
++
++#: ../properties/auth-helpers.c:64
+ msgid "Choose a Certificate Authority certificate..."
+ msgstr "Wybierz certyfikat CA..."
+ 
+-#: ../properties/auth-helpers.c:79
++#: ../properties/auth-helpers.c:80
+ msgid "Choose your personal certificate..."
+ msgstr "Wybierz certyfikat prywatny..."
+ 
+-#: ../properties/auth-helpers.c:95
++#: ../properties/auth-helpers.c:96
+ msgid "Choose your private key..."
+ msgstr "Wybierz klucz prywatny..."
+ 
+-#: ../properties/auth-helpers.c:249
++#: ../properties/auth-helpers.c:256
+ msgid "PEM certificates (*.pem, *.crt, *.key)"
+ msgstr "Certyfikaty PEM (*.pem, *.crt, *.key)"
+ 
+@@ -46,42 +82,90 @@ msgstr "VPN zgodny z Cisco AnyConnect (openconnect)"
+ msgid "Compatible with Cisco AnyConnect SSL VPN."
+ msgstr "Zgodny z VPN Cisco AnyConnect SSL."
+ 
+-#: ../properties/nm-openconnect-dialog.glade.h:1
++#: ../properties/nm-openconnect-dialog.ui.h:1
+ msgid "<b>Certificate Authentication</b>"
+ msgstr "<b>Uwierzytelnianie certyfikatu</b>"
+ 
+-#: ../properties/nm-openconnect-dialog.glade.h:2
++#: ../properties/nm-openconnect-dialog.ui.h:2
+ msgid "<b>General</b>"
+ msgstr "<b>Ogólne</b>"
+ 
+-#: ../properties/nm-openconnect-dialog.glade.h:3
++#: ../properties/nm-openconnect-dialog.ui.h:3
+ msgid "Allow Cisco Secure Desktop _trojan"
+ msgstr "_Zezwolenie na trojana Cisco Secure Desktop"
+ 
+-#: ../properties/nm-openconnect-dialog.glade.h:4
++#: ../properties/nm-openconnect-dialog.ui.h:4
++msgid "CSD _Wrapper Script:"
++msgstr "Skrypt _wrappera CSD:"
++
++#: ../properties/nm-openconnect-dialog.ui.h:5
+ msgid "Private _Key:"
+ msgstr "_Klucz prywatny:"
+ 
+-#: ../properties/nm-openconnect-dialog.glade.h:5
++#: ../properties/nm-openconnect-dialog.ui.h:6
+ msgid "Select A File"
+ msgstr "Wybór pliku"
+ 
+-#: ../properties/nm-openconnect-dialog.glade.h:6
++#: ../properties/nm-openconnect-dialog.ui.h:7
+ msgid "Use _FSID for key passphrase"
+ msgstr "Użycie _FSID dla hasła klucza"
+ 
+-#: ../properties/nm-openconnect-dialog.glade.h:7
++#: ../properties/nm-openconnect-dialog.ui.h:8
+ msgid "_CA Certificate:"
+ msgstr "Certyfikat _CA:"
+ 
+-#: ../properties/nm-openconnect-dialog.glade.h:8
++#: ../properties/nm-openconnect-dialog.ui.h:9
+ msgid "_Gateway:"
+ msgstr "_Brama:"
+ 
+-#: ../properties/nm-openconnect-dialog.glade.h:9
++#: ../properties/nm-openconnect-dialog.ui.h:10
+ msgid "_Proxy:"
+ msgstr "_Pośrednik:"
+ 
+-#: ../properties/nm-openconnect-dialog.glade.h:10
++#: ../properties/nm-openconnect-dialog.ui.h:11
+ msgid "_User Certificate:"
+ msgstr "Certyfikat _użytkownika:"
++
++#: ../src/nm-openconnect-service.c:147
++#, c-format
++msgid "invalid integer property '%s' or out of range [%d -> %d]"
++msgstr ""
++"nieprawidłowa własność liczby całkowitej \"%s\" lub jest poza zakresem [%d -"
++"> %d]"
++
++#: ../src/nm-openconnect-service.c:157
++#, c-format
++msgid "invalid boolean property '%s' (not yes or no)"
++msgstr ""
++"nieprawidłowa własność zmiennej logicznej \"%s\" (nie wynosi \"yes\" lub \"no"
++"\")"
++
++#: ../src/nm-openconnect-service.c:164
++#, c-format
++msgid "unhandled property '%s' type %s"
++msgstr "nieobsługiwana własność \"%s\" typu \"%s\""
++
++#: ../src/nm-openconnect-service.c:175
++#, c-format
++msgid "property '%s' invalid or not supported"
++msgstr "własność \"%s\" jest nieprawidłowa lub nieobsługiwana"
++
++#: ../src/nm-openconnect-service.c:191
++msgid "No VPN configuration options."
++msgstr "Brak opcji konfiguracji VPN."
++
++#: ../src/nm-openconnect-service.c:209
++msgid "No VPN secrets!"
++msgstr "Brak haseł VPN."
++
++#: ../src/nm-openconnect-service.c:289
++msgid "Could not find openconnect binary."
++msgstr "Nie można odnaleźć pliku binarnego openconnect."
++
++#: ../src/nm-openconnect-service.c:301
++msgid "No VPN gateway specified."
++msgstr "Nie podano bramy VPN."
++
++#: ../src/nm-openconnect-service.c:311
++msgid "No WebVPN cookie provided."
++msgstr "Nie podano ciasteczka WebVPN."
+diff --git a/src/nm-openconnect-service.c b/src/nm-openconnect-service.c
+index 37f9b76..b2f1fbb 100644
+--- a/src/nm-openconnect-service.c
++++ b/src/nm-openconnect-service.c
+@@ -50,6 +50,7 @@ G_DEFINE_TYPE (NMOPENCONNECTPlugin, nm_openconnect_plugin, NM_TYPE_VPN_PLUGIN)
+ 
+ typedef struct {
+ 	GPid pid;
++	char *tun_name;
+ } NMOPENCONNECTPluginPrivate;
+ 
+ #define NM_OPENCONNECT_PLUGIN_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), NM_TYPE_OPENCONNECT_PLUGIN, NMOPENCONNECTPluginPrivate))
+@@ -102,7 +103,6 @@ static ValidProperty valid_secrets[] = {
+ 
+ static uid_t tun_owner;
+ static gid_t tun_group;
+-static char *tun_name = NULL;
+ 
+ typedef struct ValidateInfo {
+ 	ValidProperty *table;
+@@ -213,11 +213,92 @@ nm_openconnect_secrets_validate (NMSettingVPN *s_vpn, GError **error)
+ 	return *error ? FALSE : TRUE;
+ }
+ 
++static char *
++create_persistent_tundev(void)
++{
++	struct passwd *pw;
++	struct ifreq ifr;
++	int fd;
++	int i;
++
++	pw = getpwnam(NM_OPENCONNECT_USER);
++	if (!pw)
++		return NULL;
++
++	tun_owner = pw->pw_uid;
++	tun_group = pw->pw_gid;
++
++	fd = open("/dev/net/tun", O_RDWR);
++	if (fd < 0) {
++		perror("open /dev/net/tun");
++		exit(EXIT_FAILURE);
++	}
++
++	memset(&ifr, 0, sizeof(ifr));
++	ifr.ifr_flags = IFF_TUN | IFF_NO_PI;
++
++	for (i = 0; i < 256; i++) {
++		sprintf(ifr.ifr_name, "vpn%d", i);
++
++		if (!ioctl(fd, TUNSETIFF, (void *)&ifr))
++			break;
++	}
++	if (i == 256)
++		exit(EXIT_FAILURE);
++
++	if (ioctl(fd, TUNSETOWNER, tun_owner) < 0) {
++		perror("TUNSETOWNER");
++		exit(EXIT_FAILURE);
++	}
++
++	if (ioctl(fd, TUNSETPERSIST, 1)) {
++		perror("TUNSETPERSIST");
++		exit(EXIT_FAILURE);
++	}
++	close(fd);
++	g_warning("Created tundev %s\n", ifr.ifr_name);
++	return g_strdup(ifr.ifr_name);
++}
++
++static void
++destroy_persistent_tundev(char *tun_name)
++{
++	struct ifreq ifr;
++	int fd;
++
++	fd = open("/dev/net/tun", O_RDWR);
++	if (fd < 0) {
++		perror("open /dev/net/tun");
++		exit(EXIT_FAILURE);
++	}
++
++	memset(&ifr, 0, sizeof(ifr));
++	ifr.ifr_flags = IFF_TUN | IFF_NO_PI;
++	strcpy(ifr.ifr_name, tun_name);
++
++	if (ioctl(fd, TUNSETIFF, (void *)&ifr) < 0) {
++		perror("TUNSETIFF");
++		exit(EXIT_FAILURE);
++	}
++
++	if (ioctl(fd, TUNSETPERSIST, 0)) {
++		perror("TUNSETPERSIST");
++		exit(EXIT_FAILURE);
++	}
++	g_warning("Destroyed  tundev %s\n", tun_name);
++	close(fd);
++}
++
+ static void openconnect_drop_child_privs(gpointer user_data)
+ {
++	char *tun_name = user_data;
++
+ 	if (tun_name) {
+-		initgroups(NM_OPENCONNECT_USER, tun_group);
+-		setuid((uid_t)tun_owner);
++		if (initgroups(NM_OPENCONNECT_USER, tun_group) ||
++			setgid(tun_group) || setuid(tun_owner)) {
++			g_warning ("Failed to drop privileges when spawning openconnect");
++			exit (1);
++		}
+ 	}
+ }
+ 
+@@ -244,6 +325,12 @@ openconnect_watch_cb (GPid pid, gint status, gpointer user_data)
+ 	waitpid (priv->pid, NULL, WNOHANG);
+ 	priv->pid = 0;
+ 
++	if (priv->tun_name) {
++		destroy_persistent_tundev (priv->tun_name);
++		g_free (priv->tun_name);
++		priv->tun_name = NULL;
++	}
++
+ 	/* Must be after data->state is set since signals use data->state */
+ 	switch (error) {
+ 	case 2:
+@@ -266,6 +353,7 @@ nm_openconnect_start_openconnect_binary (NMOPENCONNECTPlugin *plugin,
+ 										 NMSettingVPN *s_vpn,
+ 										 GError **error)
+ {
++	NMOPENCONNECTPluginPrivate *priv = NM_OPENCONNECT_PLUGIN_GET_PRIVATE (plugin);
+ 	GPid	pid;
+ 	const char **openconnect_binary = NULL;
+ 	GPtrArray *openconnect_argv;
+@@ -345,9 +433,10 @@ nm_openconnect_start_openconnect_binary (NMOPENCONNECTPlugin *plugin,
+ 	g_ptr_array_add (openconnect_argv, (gpointer) "--script");
+ 	g_ptr_array_add (openconnect_argv, (gpointer) NM_OPENCONNECT_HELPER_PATH);
+ 
+-	if (tun_name) {
++	priv->tun_name = create_persistent_tundev ();
++	if (priv->tun_name) {
+ 		g_ptr_array_add (openconnect_argv, (gpointer) "--interface");
+-		g_ptr_array_add (openconnect_argv, (gpointer) tun_name);
++		g_ptr_array_add (openconnect_argv, (gpointer) priv->tun_name);
+ 	}
+ 
+ 	g_ptr_array_add (openconnect_argv, (gpointer) props_vpn_gw);
+@@ -356,7 +445,7 @@ nm_openconnect_start_openconnect_binary (NMOPENCONNECTPlugin *plugin,
+ 
+ 	if (!g_spawn_async_with_pipes (NULL, (char **) openconnect_argv->pdata, NULL,
+ 								   G_SPAWN_DO_NOT_REAP_CHILD,
+-								   openconnect_drop_child_privs, NULL,
++								   openconnect_drop_child_privs, priv->tun_name,
+ 								   &pid, &stdin_fd, NULL, NULL, error)) {
+ 		g_ptr_array_free (openconnect_argv, TRUE);
+ 		nm_warning ("openconnect failed to start.  error: '%s'", (*error)->message);
+@@ -507,86 +596,6 @@ quit_mainloop (NMOPENCONNECTPlugin *plugin, gpointer user_data)
+ 	g_main_loop_quit ((GMainLoop *) user_data);
+ }
+ 
+-static void
+-create_persistent_tundev(void)
+-{
+-	struct passwd *pw;
+-	struct ifreq ifr;
+-	int fd;
+-	int i;
+-
+-	pw = getpwnam(NM_OPENCONNECT_USER);
+-	if (!pw)
+-		return;
+-
+-	tun_owner = pw->pw_uid;
+-	tun_group = pw->pw_gid;
+-
+-	fd = open("/dev/net/tun", O_RDWR);
+-	if (fd < 0) {
+-		perror("open /dev/net/tun");
+-		exit(EXIT_FAILURE);
+-	}
+-
+-	memset(&ifr, 0, sizeof(ifr));
+-	ifr.ifr_flags = IFF_TUN | IFF_NO_PI;
+-
+-	for (i = 0; i < 256; i++) {
+-		if (tun_name)
+-			g_free(tun_name);
+-
+-		sprintf(ifr.ifr_name, "vpn%d", i);
+-		
+-		if (!ioctl(fd, TUNSETIFF, (void *)&ifr))
+-			break;
+-	}
+-	if (i == 256)
+-		exit(EXIT_FAILURE);
+-
+-	if (ioctl(fd, TUNSETOWNER, tun_owner) < 0) {
+-		perror("TUNSETOWNER");
+-		exit(EXIT_FAILURE);
+-	}
+-
+-	if (ioctl(fd, TUNSETPERSIST, 1)) {
+-		perror("TUNSETPERSIST");
+-		exit(EXIT_FAILURE);
+-	}
+-	tun_name = g_strdup(ifr.ifr_name);
+-	close(fd);
+-}
+-
+-static void
+-destroy_persistent_tundev(void)
+-{
+-	struct ifreq ifr;
+-	int fd;
+-
+-	if (!tun_name)
+-		return;
+-
+-	fd = open("/dev/net/tun", O_RDWR);
+-	if (fd < 0) {
+-		perror("open /dev/net/tun");
+-		exit(EXIT_FAILURE);
+-	}
+-
+-	memset(&ifr, 0, sizeof(ifr));
+-	ifr.ifr_flags = IFF_TUN | IFF_NO_PI;
+-	strcpy(ifr.ifr_name, tun_name);
+-	
+-	if (ioctl(fd, TUNSETIFF, (void *)&ifr) < 0) {
+-		perror("TUNSETIFF");
+-		exit(EXIT_FAILURE);
+-	}
+-
+-	if (ioctl(fd, TUNSETPERSIST, 0)) {
+-		perror("TUNSETPERSIST");
+-		exit(EXIT_FAILURE);
+-	}
+-	close(fd);
+-}
+-
+ int main (int argc, char *argv[])
+ {
+ 	NMOPENCONNECTPlugin *plugin;
+@@ -597,8 +606,6 @@ int main (int argc, char *argv[])
+ 	if (system ("/sbin/modprobe tun") == -1)
+ 		exit (EXIT_FAILURE);
+ 
+-	create_persistent_tundev();
+-
+ 	plugin = nm_openconnect_plugin_new ();
+ 	if (!plugin)
+ 		exit (EXIT_FAILURE);
+@@ -614,7 +621,5 @@ int main (int argc, char *argv[])
+ 	g_main_loop_unref (main_loop);
+ 	g_object_unref (plugin);
+ 
+-	destroy_persistent_tundev();
+-
+ 	exit (EXIT_SUCCESS);
+ }
